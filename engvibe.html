@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EngVibe — Aprende inglés</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B1E3B;
+  --bg2:#0E274A;
+  --card:#132C52;
+  --card2:#183560;
+  --accent:#F5F5DC;
+  --accent-ink:#0B1E3B;
+  --text:#F5F5DC;
+  --text-dim:#A9B4C9;
+  --line:rgba(245,245,220,.14);
+  --good:#8FBF8F;
+  --danger:#D98E8E;
+  --radius:16px;
+  --shadow:0 10px 28px rgba(0,0,0,.45);
+  --font-display:'Sora',sans-serif;
+  --font-body:'Inter',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{
+  background:radial-gradient(ellipse at top, var(--bg2), var(--bg) 60%);
+  color:var(--text);
+  font-family:var(--font-body);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+#app{min-height:100vh;display:flex;flex-direction:column;}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;letter-spacing:-0.01em;}
+button{font-family:var(--font-body);cursor:pointer;border:none;background:none;color:inherit;}
+input,textarea{font-family:var(--font-body);}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-thumb{background:rgba(245,245,220,.18);border-radius:8px;}
+
+.icon{width:20px;height:20px;flex:0 0 auto;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.icon-lg{width:26px;height:26px;}
+
+.screen{padding:24px 18px 108px;max-width:900px;margin:0 auto;width:100%;animation:fadein .3s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+@media (prefers-reduced-motion: reduce){.screen{animation:none;}*{transition:none !important;}}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 22px;border-radius:999px;font-weight:700;font-size:15px;transition:transform .15s ease, opacity .15s ease;}
+.btn-primary{background:var(--accent);color:var(--accent-ink);}
+.btn-primary:hover{transform:translateY(-1px);opacity:.92;}
+.btn-primary:disabled{opacity:.35;cursor:not-allowed;transform:none;}
+.btn-outline{background:transparent;border:1.5px solid var(--line);color:var(--text);}
+.btn-outline:hover{border-color:rgba(245,245,220,.4);}
+.btn-block{width:100%;}
+.btn-sm{padding:9px 16px;font-size:13px;}
+
+.card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border:1px solid var(--line);}
+
+.top-header{position:sticky;top:0;z-index:20;background:rgba(11,30,59,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+.top-header-inner{max-width:900px;margin:0 auto;padding:13px 18px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.brand{font-family:var(--font-display);font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px;}
+.brand-mark{width:26px;height:26px;border-radius:8px;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
+.stat-pill-group{display:flex;gap:6px;}
+.stat-pill{display:flex;align-items:center;gap:5px;background:rgba(245,245,220,.08);padding:7px 11px;border-radius:999px;font-size:12.5px;font-weight:700;white-space:nowrap;}
+.stat-pill .icon{width:15px;height:15px;}
+
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:rgba(19,44,82,.96);backdrop-filter:blur(10px);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 6px calc(8px + env(safe-area-inset-bottom));}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10.5px;padding:6px 16px;border-radius:12px;color:var(--text-dim);font-weight:700;}
+.nav-item.active{color:var(--accent-ink);background:var(--accent);}
+.nav-item.active .icon{stroke:var(--accent-ink);}
+
+/* Onboarding */
+.onboard-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.onboard-card{max-width:480px;width:100%;}
+.progress-dots{display:flex;gap:6px;margin-bottom:22px;}
+.progress-dots span{height:4px;flex:1;background:rgba(245,245,220,.14);border-radius:4px;overflow:hidden;}
+.progress-dots span.done, .progress-dots span.current{background:var(--accent);}
+.logo-hero{font-family:var(--font-display);font-size:32px;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+.subtitle{color:var(--text-dim);font-size:14.5px;line-height:1.55;margin-bottom:22px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:6px;font-weight:700;}
+.field input[type=text]{width:100%;padding:13px 15px;border-radius:10px;border:1.5px solid var(--line);background:rgba(0,0,0,.2);color:var(--text);font-size:15px;}
+.field input:focus{outline:none;border-color:var(--accent);}
+.chip-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.chip{padding:16px 12px;border-radius:12px;border:1.5px solid var(--line);text-align:center;font-weight:700;font-size:14px;background:rgba(0,0,0,.15);}
+.chip.selected{border-color:var(--accent);background:rgba(245,245,220,.1);}
+.chip .chip-emoji{font-size:22px;display:block;margin-bottom:6px;}
+
+.pretest-q p{font-size:15px;margin-bottom:12px;line-height:1.5;}
+.option-list{display:flex;flex-direction:column;gap:8px;}
+.option-btn{text-align:left;padding:13px 15px;border-radius:10px;border:1.5px solid var(--line);background:rgba(0,0,0,.15);font-size:14px;}
+.option-btn:not(.locked):hover{border-color:rgba(245,245,220,.4);}
+.option-btn.selected{border-color:var(--accent);}
+.option-btn.correct{border-color:var(--good);background:rgba(143,191,143,.18);color:var(--good);}
+.option-btn.wrong{border-color:var(--danger);background:rgba(217,142,142,.18);color:var(--danger);}
+.option-btn.locked{cursor:default;}
+.option-btn.locked:not(.correct):not(.wrong){opacity:.45;}
+
+/* Scene card (reemplaza al video) */
+.scene-card{border-radius:var(--radius);background:linear-gradient(160deg, var(--card2), var(--card));border:1px solid var(--line);padding:22px;text-align:center;}
+.scene-card.video-scene{padding:14px;}
+.scene-card.video-scene video{width:100%;border-radius:12px;background:#000;display:block;}
+.scene-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--text-dim);background:rgba(0,0,0,.2);padding:4px 10px;border-radius:999px;margin-bottom:10px;}
+.scene-emoji{font-size:40px;margin-bottom:6px;}
+.scene-title{font-family:var(--font-display);font-weight:700;font-size:16px;margin-bottom:14px;}
+.play-btn{width:64px;height:64px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;transition:transform .15s ease;}
+.play-btn:hover{transform:scale(1.05);}
+.play-btn .icon{width:26px;height:26px;stroke:none;fill:var(--accent-ink);}
+.waveform{display:flex;align-items:flex-end;justify-content:center;gap:3px;height:26px;margin-bottom:4px;}
+.waveform span{width:3px;background:var(--accent);border-radius:2px;height:6px;opacity:.5;}
+.waveform.playing span{animation:wave 0.9s ease-in-out infinite;opacity:1;}
+.waveform span:nth-child(1){animation-delay:0s;}
+.waveform span:nth-child(2){animation-delay:.1s;}
+.waveform span:nth-child(3){animation-delay:.2s;}
+.waveform span:nth-child(4){animation-delay:.3s;}
+.waveform span:nth-child(5){animation-delay:.4s;}
+.waveform span:nth-child(6){animation-delay:.3s;}
+.waveform span:nth-child(7){animation-delay:.2s;}
+.waveform span:nth-child(8){animation-delay:.1s;}
+@keyframes wave{0%,100%{height:6px;}50%{height:24px;}}
+
+.mic-note{display:flex;gap:10px;align-items:flex-start;background:rgba(245,245,220,.06);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:12.5px;color:var(--text-dim);margin:14px 0;line-height:1.5;}
+.mic-note .icon{margin-top:1px;}
+.rec-controls{display:flex;gap:10px;margin:16px 0;flex-wrap:wrap;}
+.rec-dot{width:9px;height:9px;border-radius:50%;background:var(--danger);animation:pulse 1s infinite;display:inline-block;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.25;}}
+.scene-picker{display:flex;gap:10px;overflow-x:auto;margin-bottom:16px;padding-bottom:4px;}
+.scene-thumb{flex:0 0 auto;width:104px;border-radius:12px;overflow:hidden;border:2px solid transparent;text-align:left;background:var(--card);}
+.scene-thumb.active{border-color:var(--accent);}
+.scene-thumb .st-visual{width:100%;height:58px;display:flex;align-items:center;justify-content:center;font-size:24px;background:var(--card2);}
+.scene-thumb .st-label{font-size:10.5px;padding:6px 8px;font-weight:700;}
+
+.section-title{font-size:14px;color:var(--text-dim);font-weight:700;margin:26px 0 12px;}
+.hero-strip{border-radius:var(--radius);padding:24px 22px;margin-bottom:20px;background:linear-gradient(135deg, var(--card2), var(--card));border:1px solid var(--line);position:relative;overflow:hidden;}
+.hero-strip h2{font-size:22px;margin-bottom:4px;}
+.hero-strip p{color:var(--text-dim);font-size:14px;}
+
+.skill-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.skill-card{padding:14px;}
+.skill-name{font-size:12.5px;color:var(--text-dim);margin-bottom:8px;font-weight:700;display:flex;align-items:center;gap:6px;}
+.skill-bar-track{height:7px;border-radius:8px;background:rgba(0,0,0,.3);overflow:hidden;}
+.skill-bar-fill{height:100%;background:var(--accent);border-radius:8px;transition:width .5s ease;}
+.skill-val{font-size:11.5px;color:var(--text-dim);margin-top:6px;}
+
+.category-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;}
+.cat-btn{flex:0 0 auto;padding:9px 16px;border-radius:999px;border:1.5px solid var(--line);font-size:13px;font-weight:700;background:rgba(0,0,0,.15);white-space:nowrap;}
+.cat-btn.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+
+.route-path{display:flex;flex-direction:column;gap:14px;margin-top:14px;}
+.route-node{display:flex;align-items:center;gap:14px;}
+.node-circle{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;background:rgba(0,0,0,.25);border:2px solid var(--line);}
+.node-circle.done{background:var(--accent);border-color:var(--accent);}
+.node-circle.done .icon{stroke:var(--accent-ink);}
+.node-circle.locked{opacity:.35;}
+.node-info{flex:1;}
+.n-title{font-weight:700;font-size:14px;}
+.n-sub{font-size:12px;color:var(--text-dim);}
+
+.module-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;}
+.module-btn{padding:18px 14px;text-align:left;border-radius:var(--radius);}
+.module-btn .m-icon{width:34px;height:34px;border-radius:10px;background:rgba(245,245,220,.1);display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.module-btn .m-name{font-weight:700;font-size:14.5px;}
+.module-btn .m-sub{font-size:11.5px;color:var(--text-dim);margin-top:3px;}
+
+.module-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.back-btn{width:38px;height:38px;border-radius:50%;background:rgba(245,245,220,.08);display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+
+.flashcard{background:var(--card);border-radius:var(--radius);padding:30px 22px;text-align:center;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow);border:1px solid var(--line);}
+.flashcard .fc-word{font-size:25px;font-weight:700;font-family:var(--font-display);}
+.flashcard .fc-sub{color:var(--text-dim);font-size:12.5px;margin-top:10px;}
+.flashcard .fc-example{font-size:13.5px;margin-top:16px;color:var(--text-dim);font-style:italic;}
+.card-nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px;}
+.progress-count{font-size:12.5px;color:var(--text-dim);}
+
+.word-bank{display:flex;flex-wrap:wrap;gap:8px;min-height:50px;padding:12px;background:rgba(0,0,0,.2);border-radius:10px;margin-bottom:12px;}
+.word-chip{padding:9px 14px;border-radius:8px;background:rgba(245,245,220,.1);font-size:13.5px;font-weight:700;}
+.answer-slot{min-height:52px;padding:10px;background:rgba(0,0,0,.25);border:1.5px dashed var(--line);border-radius:10px;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.word-chip.placed{background:var(--accent);color:var(--accent-ink);}
+
+textarea.free-answer{width:100%;min-height:100px;padding:12px;border-radius:10px;border:1.5px solid var(--line);background:rgba(0,0,0,.2);color:var(--text);font-size:14px;resize:vertical;}
+
+.comic-panel{border-radius:var(--radius);overflow:hidden;background:var(--card);box-shadow:var(--shadow);border:1px solid var(--line);}
+.comic-scene{padding:24px 20px;min-height:170px;background:linear-gradient(160deg, var(--card2), var(--card));}
+.comic-scene .cs-emoji{font-size:36px;margin-bottom:10px;}
+.comic-scene p{font-size:14.5px;line-height:1.6;}
+.comic-choices{padding:16px 20px 20px;display:flex;flex-direction:column;gap:8px;}
+
+.subtitle-box{background:rgba(0,0,0,.3);border-radius:10px;padding:16px;margin:14px 0;font-size:15px;line-height:1.9;}
+.word-tap{cursor:pointer;padding:2px 3px;border-radius:4px;}
+.word-tap:hover{background:rgba(245,245,220,.08);}
+.word-tap.found-wrong{color:var(--danger);text-decoration:underline wavy;font-weight:700;}
+.word-tap.shake{animation:shake .3s;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-3px);}75%{transform:translateX(3px);}}
+
+.feedback-banner{display:flex;align-items:center;gap:8px;padding:12px 16px;border-radius:10px;margin:14px 0;font-size:13.5px;font-weight:700;}
+.feedback-banner.good{background:rgba(143,191,143,.16);color:var(--good);}
+.feedback-banner.bad{background:rgba(217,142,142,.16);color:var(--danger);}
+
+.shop-tabs{display:flex;gap:8px;margin-bottom:16px;}
+.shop-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.shop-item{padding:16px;text-align:center;}
+.shop-item .si-emoji{font-size:32px;margin-bottom:8px;}
+.shop-item .si-name{font-weight:700;font-size:13.5px;}
+.shop-item .si-price{font-size:12px;color:var(--text-dim);margin:6px 0 10px;display:flex;align-items:center;justify-content:center;gap:4px;}
+.theme-swatch{width:100%;height:32px;border-radius:8px;margin-bottom:8px;}
+
+.achv-list{display:flex;flex-direction:column;gap:10px;margin-top:14px;}
+.achv-item{display:flex;align-items:center;gap:14px;padding:14px;}
+.achv-item.locked{opacity:.4;}
+.achv-emoji{font-size:24px;}
+.achv-info .a-name{font-weight:700;font-size:13.5px;}
+.achv-info .a-sub{font-size:11.5px;color:var(--text-dim);}
+
+.profile-row{display:flex;align-items:center;gap:16px;margin-bottom:22px;}
+.avatar-big{width:70px;height:70px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:flex;align-items:center;justify-content:center;font-size:32px;}
+.stat-block{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.stat-block .sb-item{text-align:center;padding:14px 8px;}
+.stat-block .sb-num{font-size:19px;font-weight:800;font-family:var(--font-display);}
+.stat-block .sb-label{font-size:10.5px;color:var(--text-dim);margin-top:2px;}
+
+.toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:99;background:var(--accent);color:var(--accent-ink);padding:12px 20px;border-radius:999px;font-size:13px;font-weight:700;box-shadow:var(--shadow);animation:toastin .3s ease;}
+@keyframes toastin{from{opacity:0;transform:translate(-50%,-10px);}to{opacity:1;transform:translate(-50%,0);}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ===================== ICONS ===================== */
+const ICONS = {
+  home:'<svg class="icon" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg>',
+  trophy:'<svg class="icon" viewBox="0 0 24 24"><path d="M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M7 5H4a3 3 0 0 0 3 5"/><path d="M17 5h3a3 3 0 0 1-3 5"/><path d="M12 14v3"/><path d="M8 21h8"/><path d="M9 21v-2a3 3 0 0 1 6 0v2"/></svg>',
+  bag:'<svg class="icon" viewBox="0 0 24 24"><path d="M6 8h12l1 12H5L6 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>',
+  user:'<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6"/></svg>',
+  mic:'<svg class="icon" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/><path d="M9 21h6"/></svg>',
+  cards:'<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="6" width="14" height="12" rx="2"/><path d="M8 3h11a2 2 0 0 1 2 2v11"/></svg>',
+  headphones:'<svg class="icon" viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="2" y="14" width="5" height="7" rx="2"/><rect x="17" y="14" width="5" height="7" rx="2"/></svg>',
+  book:'<svg class="icon" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H12v18H6.5A2.5 2.5 0 0 0 4 23"/><path d="M20 5.5A2.5 2.5 0 0 0 17.5 3H12v18h5.5a2.5 2.5 0 0 1 2.5 2"/></svg>',
+  back:'<svg class="icon" viewBox="0 0 24 24"><path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/></svg>',
+  flame:'<svg class="icon" viewBox="0 0 24 24"><path d="M12 2c1 4-3 5-3 9a3 3 0 0 0 6 0c2 1 3 3 3 5a6 6 0 0 1-12 0c0-5 3-7 6-14z"/></svg>',
+  spark:'<svg class="icon" viewBox="0 0 24 24"><path d="M12 2l1.8 6.2L20 10l-6.2 1.8L12 18l-1.8-6.2L4 10l6.2-1.8z"/></svg>',
+  coin:'<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12h6"/><path d="M12 9v6"/></svg>',
+  play:'<svg class="icon" viewBox="0 0 24 24" style="stroke:none;"><path d="M6 4l14 8-14 8V4z"/></svg>',
+  check:'<svg class="icon" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>',
+  stop:'<svg class="icon" viewBox="0 0 24 24" style="stroke:none;"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>',
+  film:'<svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M3 15h18M8 4v16M16 4v16"/></svg>',
+};
+
+/* ===================== DATA ===================== */
+// Enlace publicado de esta misma app (contexto seguro https, necesario para el micrófono).
+const PUBLISHED_APP_URL = 'https://claude.ai/artifact/TfYf33vP7dfTFZufW1YyH9';
+
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+// Escenas originales (no derivadas de películas con derechos de autor), usadas para
+// Speaking / Listening. El audio se genera con la voz nativa del navegador (Text-to-Speech),
+// así siempre funciona, sin depender de descargas ni de conexión estable.
+const STORY_SCENES = [
+  {id:'cine1', category:'cine', emoji:'🎬', title:'Detrás de cámaras', sentence:"I think we should try it one more time.", translation:"Creo que deberíamos intentarlo una vez más."},
+  {id:'cine2', category:'cine', emoji:'🎞️', title:'El estreno', sentence:"The whole audience stood up and cheered.", translation:"Todo el público se puso de pie y aplaudió."},
+  {id:'deportes1', category:'deportes', emoji:'⚽', title:'Final del campeonato', sentence:"This is a beautiful morning for the final match.", translation:"Esta es una hermosa mañana para la final."},
+  {id:'deportes2', category:'deportes', emoji:'🏆', title:'El último minuto', sentence:"We scored the winning goal in the last minute.", translation:"Anotamos el gol ganador en el último minuto."},
+  {id:'musica1', category:'musica', emoji:'🎵', title:'Ensayo en vivo', sentence:"I have been practicing this song for so long.", translation:"He estado practicando esta canción durante tanto tiempo."},
+  {id:'musica2', category:'musica', emoji:'🎤', title:'Noche de concierto', sentence:"The crowd sang every word of the chorus.", translation:"El público cantó cada palabra del coro."},
+  {id:'tecnologia1', category:'tecnologia', emoji:'💻', title:'Lanzamiento del producto', sentence:"We are surrounded by the very technology we imagined.", translation:"Estamos rodeados por la misma tecnología que imaginamos."},
+  {id:'tecnologia2', category:'tecnologia', emoji:'🤖', title:'Demo en vivo', sentence:"This device updates itself while you sleep.", translation:"Este dispositivo se actualiza solo mientras duermes."},
+  // Escena propia del usuario, subida junto al HTML en el mismo repositorio de GitHub.
+  // Reemplaza "sentence" y "translation" por la frase real de tu video (debe ser texto original tuyo, no diálogo de una película con derechos de autor).
+  {id:'escena1', category:'cine', emoji:'🎥', title:'Escena 1 (tuya)', videoSrc:'Escena-1.mp4', sentence:"ESCRIBE AQUÍ TU FRASE EN INGLÉS", translation:"ESCRIBE AQUÍ LA TRADUCCIÓN"},
+];
+
+const VOCAB_BY_CATEGORY = {
+  cine: [
+    {w:'plot', t:'trama', ex:'The plot of the movie was confusing.'},
+    {w:'sequel', t:'secuela', ex:'They are filming the sequel next year.'},
+    {w:'cast', t:'reparto', ex:'The cast gave an amazing performance.'},
+    {w:'trailer', t:'avance', ex:'I watched the trailer three times.'},
+    {w:'subtitle', t:'subtítulo', ex:'I read the subtitles because my English is not perfect.'},
+    {w:'scene', t:'escena', ex:'That scene made me cry.'},
+    {w:'director', t:'director', ex:'The director won an award this year.'},
+    {w:'screenplay', t:'guion', ex:'She wrote the screenplay in two months.'},
+    {w:'premiere', t:'estreno', ex:'The premiere is next Friday.'},
+  ],
+  deportes: [
+    {w:'goal', t:'gol', ex:'He scored the winning goal.'},
+    {w:'referee', t:'árbitro', ex:'The referee showed a red card.'},
+    {w:'teammate', t:'compañero de equipo', ex:'My teammate passed me the ball.'},
+    {w:'championship', t:'campeonato', ex:'They won the championship last year.'},
+    {w:'training', t:'entrenamiento', ex:'Training starts at six in the morning.'},
+    {w:'score', t:'marcador', ex:'What is the score right now?'},
+    {w:'coach', t:'entrenador', ex:'The coach called a timeout.'},
+    {w:'fans', t:'aficionados', ex:'The fans cheered until the end.'},
+    {w:'injury', t:'lesión', ex:'He is out with a knee injury.'},
+  ],
+  musica: [
+    {w:'lyrics', t:'letra (de canción)', ex:'I know all the lyrics to that song.'},
+    {w:'melody', t:'melodía', ex:'The melody is stuck in my head.'},
+    {w:'concert', t:'concierto', ex:'We are going to a concert tonight.'},
+    {w:'rhythm', t:'ritmo', ex:'She has a great sense of rhythm.'},
+    {w:'album', t:'álbum', ex:'This is his best album so far.'},
+    {w:'singer', t:'cantante', ex:'The singer forgot the words.'},
+    {w:'band', t:'banda', ex:'The band played for two hours.'},
+    {w:'tune', t:'melodía/tonada', ex:'That is a catchy tune.'},
+    {w:'audience', t:'público', ex:'The audience clapped loudly.'},
+  ],
+  tecnologia: [
+    {w:'device', t:'dispositivo', ex:'I bought a new device yesterday.'},
+    {w:'update', t:'actualización', ex:'You need to install the update.'},
+    {w:'password', t:'contraseña', ex:'Never share your password.'},
+    {w:'battery', t:'batería', ex:'My battery is almost dead.'},
+    {w:'screen', t:'pantalla', ex:'The screen cracked when it fell.'},
+    {w:'wireless', t:'inalámbrico', ex:'These headphones are wireless.'},
+    {w:'software', t:'software', ex:'The software needs to be updated.'},
+    {w:'storage', t:'almacenamiento', ex:'I am out of storage on my phone.'},
+    {w:'backup', t:'copia de seguridad', ex:'Always keep a backup of your files.'},
+  ],
+};
+
+const SENTENCE_BUILD = [
+  {parts:['I','am','learning','English'], answer:'I am learning English'},
+  {parts:['She','watches','movies','every','weekend'], answer:'She watches movies every weekend'},
+  {parts:['We','scored','a','goal','yesterday'], answer:'We scored a goal yesterday'},
+  {parts:['They','love','listening','to','music'], answer:'They love listening to music'},
+  {parts:['My','phone','battery','is','low'], answer:'My phone battery is low'},
+  {parts:['He','plays','guitar','in','a','band'], answer:'He plays guitar in a band'},
+  {parts:['The','team','trains','every','morning'], answer:'The team trains every morning'},
+  {parts:['This','app','helps','me','study'], answer:'This app helps me study'},
+];
+
+const LISTENING_ITEMS = [
+  {level:'basic', sceneId:'deportes1', question:'Complete: "This is a beautiful ___ for the final match."', options:['morning','evening','storm','city'], answer:'morning'},
+  {level:'basic', sceneId:'cine1', question:'Complete: "I think we should try it one more ___."', options:['time','day','game','song'], answer:'time'},
+  {level:'basic', sceneId:'musica1', question:'What has the speaker been doing for a long time?', options:['Practicing a song','Watching a movie','Playing soccer','Fixing a phone'], answer:'Practicing a song'},
+  {level:'basic', sceneId:'tecnologia2', question:'Complete: "This device updates itself while you ___."', options:['sleep','cook','drive','sing'], answer:'sleep'},
+  {level:'advanced', sceneId:'cine2', question:'Describe in your own words what happened at the premiere.', freeform:true},
+  {level:'advanced', sceneId:'deportes2', question:'Describe in your own words what happened in the last minute.', freeform:true},
+  {level:'advanced', sceneId:'tecnologia1', question:'Describe in your own words what the speaker says about technology.', freeform:true},
+  {level:'advanced', sceneId:'musica2', question:'Describe in your own words what the crowd did during the concert.', freeform:true},
+];
+
+const COMIC_STORY = {
+  start:'a',
+  nodes:{
+    a:{emoji:'🎬', text:'You arrive at the film set. The director looks stressed. "We lost the lead actor!" she says. What do you do?',
+       choices:[{label:'"I can help you find a replacement."', next:'b'},{label:'"Can I try the role?"', next:'c'}]},
+    b:{emoji:'📋', text:'You call three agencies. One actor is available today, but he only speaks a little English. Do you help him rehearse first?',
+       choices:[{label:'"Let\'s rehearse the lines together."', next:'b2'},{label:'"There is no time, let\'s just start."', next:'b3'}]},
+    b2:{emoji:'🗣️', text:'You practice the lines with him for ten minutes. He feels confident now. The scene goes perfectly.', choices:[{label:'Continue', next:'end_great'}]},
+    b3:{emoji:'😬', text:'The actor stumbles over his lines twice, but the director keeps the honest take. "It adds realism," she says.', choices:[{label:'Continue', next:'end_good'}]},
+    c:{emoji:'🎭', text:'The director hesitates, then hands you the script. "Let\'s see what you\'ve got." You read the first line perfectly.',
+       choices:[{label:'Continue', next:'end_great'}]},
+    end_good:{emoji:'✅', text:'The scene wraps on time. The crew thanks you for solving the problem quickly. THE END.', choices:[]},
+    end_great:{emoji:'🌟', text:'The director is impressed. "You just became our new lead actor!" THE END.', choices:[]},
+  }
+};
+
+const SUBTITLE_ITEMS = [
+  {words:'The concert starts at eight o\'clock.'.split(' '), wrongIndex:3, fix:'at', originalWrong:'in'},
+  {words:'She has been playing since morning.'.split(' '), wrongIndex:3, fix:'playing', originalWrong:'play'},
+  {words:'They scored two goals in the match.'.split(' '), wrongIndex:3, fix:'goals', originalWrong:'goal'},
+  {words:'My phone battery is almost dead.'.split(' '), wrongIndex:3, fix:'is', originalWrong:'are'},
+  {words:'We are learning English together.'.split(' '), wrongIndex:2, fix:'learning', originalWrong:'learn'},
+  {words:'He plays guitar very well.'.split(' '), wrongIndex:3, fix:'well', originalWrong:'good'},
+].map(item=>{
+  // Reconstruimos la oración mostrada (con el error) a partir de la versión correcta.
+  const shown = item.words.slice();
+  shown[item.wrongIndex] = item.originalWrong + (item.words[item.wrongIndex].endsWith('.') ? '.' : '');
+  return Object.assign({}, item, {shownWords: shown});
+});
+
+const SHOP_AVATARS = [
+  {id:'av_fox', emoji:'🦊', name:'Zorro', cost:80, type:'coins'},
+  {id:'av_owl', emoji:'🦉', name:'Búho', cost:80, type:'coins'},
+  {id:'av_lion', emoji:'🦁', name:'León', cost:150, type:'coins'},
+  {id:'av_astro', emoji:'🧑‍🚀', name:'Astronauta', cost:300, type:'xp'},
+  {id:'av_wizard', emoji:'🧙', name:'Mago', cost:300, type:'xp'},
+  {id:'av_robot', emoji:'🤖', name:'Robot', cost:500, type:'xp'},
+];
+const SHOP_THEMES = [
+  {id:'theme_default', name:'Azul Marino', value:'default', color:'#0B1E3B', cost:0, type:'coins'},
+  {id:'theme_gold', name:'Marino y Oro', value:'gold', color:'#8a6d1e', cost:120, type:'coins'},
+  {id:'theme_teal', name:'Marino y Turquesa', value:'teal', color:'#1e6d6d', cost:120, type:'coins'},
+  {id:'theme_rose', name:'Marino y Rosa', value:'rose', color:'#8A3B5B', cost:200, type:'xp'},
+];
+
+const ACHIEVEMENTS = [
+  {id:'first_lesson', emoji:'🎯', name:'Primer paso', sub:'Completa tu primera lección', check:s=>s.stats.lessonsDone>=1},
+  {id:'streak3', emoji:'🔥', name:'En racha', sub:'Alcanza 3 días de racha', check:s=>s.streak>=3},
+  {id:'speaker', emoji:'🎙️', name:'Voz propia', sub:'Graba tu voz en Speaking', check:s=>s.stats.recordings>=1},
+  {id:'wordsmith', emoji:'📚', name:'Coleccionista', sub:'Revisa 20 tarjetas de vocabulario', check:s=>s.stats.cardsSeen>=20},
+  {id:'shopper', emoji:'🛍️', name:'Primera compra', sub:'Compra un ítem en la tienda', check:s=>s.ownedItems.length>1},
+  {id:'level5', emoji:'⭐', name:'Nivel 5', sub:'Alcanza el nivel 5', check:s=>s.level>=5},
+  {id:'perfectionist', emoji:'💎', name:'Precisión', sub:'Responde 10 preguntas correctamente', check:s=>s.stats.correctAnswers>=10},
+];
+
+const CATEGORIES = [
+  {id:'cine', emoji:'🎬', name:'Cine'},
+  {id:'deportes', emoji:'⚽', name:'Deportes'},
+  {id:'musica', emoji:'🎵', name:'Música'},
+  {id:'tecnologia', emoji:'💻', name:'Tecnología'},
+];
+
+const ROUTE_STEPS = [
+  {icon:ICONS.mic, title:'Primeras palabras', kind:'speaking'},
+  {icon:ICONS.cards, title:'Construye frases', kind:'vocabulary'},
+  {icon:ICONS.headphones, title:'Oído activo', kind:'listening'},
+  {icon:ICONS.book, title:'Historia interactiva', kind:'reading'},
+  {icon:ICONS.film, title:'Repara subtítulos', kind:'reading'},
+  {icon:ICONS.trophy, title:'Meta del nivel', kind:'listening'},
+];
+
+/* ===================== TEXT-TO-SPEECH ===================== */
+let ttsVoice = null;
+function pickVoice(){
+  if(!('speechSynthesis' in window)) return;
+  const voices = speechSynthesis.getVoices();
+  ttsVoice = voices.find(v=>v.lang==='en-US') || voices.find(v=>v.lang && v.lang.startsWith('en')) || voices[0] || null;
+}
+if('speechSynthesis' in window){
+  pickVoice();
+  speechSynthesis.onvoiceschanged = pickVoice;
+}
+function speak(text, onEnd){
+  if(!('speechSynthesis' in window)){
+    toast('Tu navegador no soporta lectura de voz.');
+    if(onEnd) onEnd();
+    return;
+  }
+  speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'en-US';
+  utter.rate = 0.95;
+  if(ttsVoice) utter.voice = ttsVoice;
+  if(onEnd) utter.onend = onEnd;
+  speechSynthesis.speak(utter);
+}
+
+/* ===================== STATE ===================== */
+const STORAGE_KEY = 'engvibe_state_v2';
+
+function defaultState(){
+  return {
+    onboarded:false,
+    name:'',
+    categories:[],
+    level:1,
+    xp:0,
+    coins:20,
+    streak:0,
+    lastActiveDate:null,
+    avatar:'🙂',
+    theme:'default',
+    ownedItems:['theme_default'],
+    skills:{speaking:10, vocabulary:10, listening:10, reading:10},
+    unlockedNodes:1,
+    stats:{lessonsDone:0, recordings:0, cardsSeen:0, correctAnswers:0},
+    achievementsUnlocked:[],
+  };
+}
+
+let state = loadState();
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return defaultState();
+    const parsed = JSON.parse(raw);
+    const merged = Object.assign(defaultState(), parsed);
+    merged.skills = Object.assign(defaultState().skills, parsed.skills||{});
+    merged.stats = Object.assign(defaultState().stats, parsed.stats||{});
+    return merged;
+  }catch(e){
+    return defaultState();
+  }
+}
+function saveState(){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+}
+function touchStreak(){
+  const today = new Date().toDateString();
+  if(state.lastActiveDate === today) return;
+  const yesterday = new Date(Date.now()-86400000).toDateString();
+  if(state.lastActiveDate === yesterday){ state.streak += 1; }
+  else if(state.lastActiveDate === null){ state.streak = 1; }
+  else { state.streak = 1; }
+  state.lastActiveDate = today;
+  saveState();
+}
+function addXP(amount){
+  state.xp += amount;
+  const newLevel = Math.max(1, Math.floor(state.xp/150)+1);
+  if(newLevel > state.level){ state.level = newLevel; toast(`¡Subiste a nivel ${newLevel}! 🎉`); }
+  saveState();
+}
+function addCoins(amount){ state.coins += amount; saveState(); }
+function bumpSkill(key, amount){
+  state.skills[key] = Math.min(100, (state.skills[key]||0)+amount);
+  saveState();
+}
+function registerCorrect(){ state.stats.correctAnswers += 1; saveState(); checkAchievements(); }
+function checkAchievements(){
+  ACHIEVEMENTS.forEach(a=>{
+    if(!state.achievementsUnlocked.includes(a.id) && a.check(state)){
+      state.achievementsUnlocked.push(a.id);
+      toast(`Logro desbloqueado: ${a.emoji} ${a.name}`);
+    }
+  });
+  saveState();
+}
+
+/* ===================== APP / ROUTER ===================== */
+let route = state.onboarded ? {view:'hub'} : {view:'onboard', step:0};
+const app = document.getElementById('app');
+
+function nav(view, params){
+  route = Object.assign({view}, params||{});
+  render();
+  window.scrollTo(0,0);
+}
+function toast(msg){
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 2600);
+}
+function applyTheme(){
+  const themeColors = {
+    default:{accent:'#F5F5DC'},
+    gold:{accent:'#E6C36B'},
+    teal:{accent:'#7FD6D6'},
+    rose:{accent:'#E8A9C4'},
+  };
+  const t = themeColors[state.theme] || themeColors.default;
+  document.documentElement.style.setProperty('--accent', t.accent);
+}
+
+function render(){
+  applyTheme();
+  if(!state.onboarded){
+    app.innerHTML = renderOnboarding();
+    wireOnboarding();
+    return;
+  }
+  touchStreak();
+  let body = '';
+  switch(route.view){
+    case 'hub': body = renderHub(); break;
+    case 'speaking': body = renderSpeaking(); break;
+    case 'vocabulary': body = renderVocabulary(); break;
+    case 'listening': body = renderListening(); break;
+    case 'reading': body = renderReading(); break;
+    case 'shop': body = renderShop(); break;
+    case 'achievements': body = renderAchievements(); break;
+    case 'profile': body = renderProfile(); break;
+    default: body = renderHub();
+  }
+  app.innerHTML = `${renderTopHeader()}${body}${renderBottomNav()}`;
+  wireGlobal();
+  wireView();
+}
+
+/* ===================== SCENE CARD (reusable) ===================== */
+function sceneCardHTML(scene, id, playing){
+  const bars = Array.from({length:8}).map(()=>'<span></span>').join('');
+  return `
+  <div class="scene-card">
+    <div class="scene-tag">${scene.category.toUpperCase()}</div>
+    <div class="scene-emoji">${scene.emoji}</div>
+    <div class="scene-title">${scene.title}</div>
+    <button class="play-btn" id="${id}-play">${playing ? ICONS.stop : ICONS.play}</button>
+    <div class="waveform ${playing?'playing':''}" id="${id}-wave">${bars}</div>
+    <div class="progress-count">${playing ? 'Reproduciendo…' : 'Toca para escuchar'}</div>
+  </div>`;
+}
+// Tarjeta con video real (para escenas que el usuario sube junto al HTML, ej. Escena-1.mp4).
+function videoSceneHTML(scene, id){
+  const missingMsg = `No se encontró el archivo &quot;${scene.videoSrc}&quot;. Colócalo en la misma carpeta que este HTML en tu repositorio de GitHub.`;
+  return `
+  <div class="scene-card video-scene">
+    <div class="scene-tag">${scene.category.toUpperCase()}</div>
+    <video id="${id}-video" src="${scene.videoSrc}" controls playsinline preload="metadata"
+      onerror="this.insertAdjacentHTML('afterend', '&lt;div class=&quot;feedback-banner bad&quot;&gt;⚠️ ${missingMsg}&lt;/div&gt;')"></video>
+    <div class="scene-title" style="margin-top:10px;">${scene.title}</div>
+  </div>`;
+}
+function wireSceneCard(id, scene, onEnd){
+  const btn = document.getElementById(id+'-play');
+  const wave = document.getElementById(id+'-wave');
+  if(!btn) return;
+  btn.onclick = ()=>{
+    btn.innerHTML = ICONS.stop;
+    wave.classList.add('playing');
+    speak(scene.sentence, ()=>{
+      btn.innerHTML = ICONS.play;
+      wave.classList.remove('playing');
+      if(onEnd) onEnd();
+    });
+  };
+}
+
+/* ===================== MCQ HELPER (shuffle + lock) ===================== */
+function mcqHTML(options, groupId){
+  return `<div class="option-list" id="${groupId}">
+    ${options.map(o=>`<button class="option-btn" data-answer="${o}">${o}</button>`).join('')}
+  </div>`;
+}
+function wireMCQ(groupId, correctAnswer, onResult){
+  const group = document.getElementById(groupId);
+  if(!group) return;
+  group.querySelectorAll('.option-btn').forEach(btn=>{
+    btn.onclick = ()=>{
+      const chosen = btn.getAttribute('data-answer');
+      const isCorrect = chosen === correctAnswer;
+      group.querySelectorAll('.option-btn').forEach(b=>{
+        b.classList.add('locked');
+        b.onclick = null;
+        if(b.getAttribute('data-answer') === correctAnswer) b.classList.add('correct');
+        else if(b === btn) b.classList.add('wrong');
+      });
+      onResult(isCorrect);
+    };
+  });
+}
+
+/* ===================== ONBOARDING ===================== */
+let onboardData = { name:'', purpose:[], selfLevel:'', answers:{}, recorded:false };
+
+const PURPOSE_OPTIONS = [
+  {id:'cine', emoji:'🎬', name:'Ver películas y series sin subtítulos'},
+  {id:'deportes', emoji:'⚽', name:'Seguir deportes en inglés'},
+  {id:'musica', emoji:'🎵', name:'Entender canciones'},
+  {id:'tecnologia', emoji:'💻', name:'Trabajo, estudios o tecnología'},
+];
+const LEVEL_OPTIONS = [
+  {id:1, name:'Principiante', sub:'Conozco palabras sueltas'},
+  {id:3, name:'Intermedio', sub:'Entiendo frases simples'},
+  {id:5, name:'Avanzado', sub:'Puedo mantener una conversación'},
+];
+
+function renderOnboarding(){
+  const step = route.step || 0;
+  let inner = '';
+  if(step===0) inner = obWelcome();
+  else if(step===1) inner = obName();
+  else if(step===2) inner = obPurpose();
+  else if(step===3) inner = obLevel();
+  else if(step===4) inner = obTransition();
+  else if(step===5) inner = obPretestSpeaking();
+  else if(step===6) inner = obPretestVocab();
+  else if(step===7) inner = obPretestListening();
+  else if(step===8) inner = obPretestReading();
+  else if(step===9) inner = obResult();
+
+  const dots = Array.from({length:10}).map((_,i)=>{
+    let cls = '';
+    if(i<step) cls='done'; else if(i===step) cls='current';
+    return `<span class="${cls}"></span>`;
+  }).join('');
+
+  return `<div class="onboard-wrap"><div class="onboard-card"><div class="progress-dots">${dots}</div>${inner}</div></div>`;
+}
+function obWelcome(){
+  return `
+    <div class="logo-hero"><span class="brand-mark">EV</span>EngVibe</div>
+    <p class="subtitle">Aprende inglés real viendo escenas, grabando tu voz y jugando con historias.</p>
+    <button class="btn btn-primary btn-block" id="ob-start">Comenzar</button>
+  `;
+}
+function obName(){
+  return `
+    <h2 style="font-size:22px;margin-bottom:6px;">¿Cómo te llamas?</h2>
+    <p class="subtitle">Usaremos tu nombre para personalizar tu experiencia.</p>
+    <div class="field"><label>Tu nombre</label><input type="text" id="ob-name-input" placeholder="Ej: María" value="${onboardData.name}"></div>
+    <button class="btn btn-primary btn-block" id="ob-name-next" disabled>Continuar</button>
+  `;
+}
+function obPurpose(){
+  const chips = PURPOSE_OPTIONS.map(c=>`
+    <button class="chip ${onboardData.purpose.includes(c.id)?'selected':''}" data-purpose="${c.id}">
+      <span class="chip-emoji">${c.emoji}</span>${c.name}
+    </button>`).join('');
+  return `
+    <h2 style="font-size:22px;margin-bottom:6px;">¿Para qué quieres aprender inglés?</h2>
+    <p class="subtitle">Elige uno o más motivos. Con esto elegimos tus contenidos.</p>
+    <div class="chip-grid">${chips}</div>
+    <button class="btn btn-primary btn-block" id="ob-purpose-next" style="margin-top:20px;" disabled>Continuar</button>
+  `;
+}
+function obLevel(){
+  const options = LEVEL_OPTIONS.map(l=>`
+    <button class="option-btn ${onboardData.selfLevel===l.id?'selected':''}" data-level="${l.id}">
+      <strong>${l.name}</strong><br><span style="color:var(--text-dim);font-size:12.5px;">${l.sub}</span>
+    </button>`).join('');
+  return `
+    <h2 style="font-size:22px;margin-bottom:6px;">¿Cuál es tu nivel de inglés?</h2>
+    <p class="subtitle">Cuéntanos cómo te sientes hoy, luego lo confirmamos con una prueba rápida.</p>
+    <div class="option-list">${options}</div>
+    <button class="btn btn-primary btn-block" id="ob-level-next" style="margin-top:20px;" disabled>Continuar</button>
+  `;
+}
+function obTransition(){
+  return `
+    <div style="text-align:center;">
+      <div style="font-size:38px;margin-bottom:10px;">🧪</div>
+      <h2 style="font-size:21px;">Ahora, 4 pruebas rápidas</h2>
+      <p class="subtitle">Vamos a confirmar tu nivel real con un reto corto de Speaking, Vocabulary, Listening y Reading.</p>
+      <button class="btn btn-primary btn-block" id="ob-tests-start" style="margin-top:10px;">Empezar pruebas</button>
+    </div>
+  `;
+}
+function obPretestSpeaking(){
+  const scene = STORY_SCENES[0];
+  return `
+    <h2 style="font-size:20px;margin-bottom:6px;">Prueba 1 · Speaking</h2>
+    <p class="subtitle">Escucha la frase y repítela en voz alta.</p>
+    ${sceneCardHTML(scene,'ob-speak',false)}
+    <p style="margin-top:14px;font-weight:700;">"${scene.sentence}"</p>
+    <p class="subtitle" style="margin-top:4px;">${scene.translation}</p>
+    <button class="btn btn-primary btn-block" id="ob-speaking-next">Ya practiqué, continuar</button>
+  `;
+}
+function obPretestVocab(){
+  const q = {word:'goal', options:shuffle(['gol','meta personal','portería','árbitro']), answer:'gol'};
+  return `
+    <h2 style="font-size:20px;margin-bottom:6px;">Prueba 2 · Vocabulary</h2>
+    <p class="subtitle">¿Qué significa esta palabra?</p>
+    <div class="pretest-q">
+      <p style="font-size:22px;font-weight:700;font-family:var(--font-display);">${q.word}</p>
+      ${mcqHTML(q.options,'ob-vocab-options')}
+    </div>
+    <div id="ob-vocab-feedback"></div>
+    <button class="btn btn-primary btn-block" id="ob-vocab-next" disabled style="margin-top:14px;">Continuar</button>
+  `;
+}
+function obPretestListening(){
+  const scene = STORY_SCENES[2];
+  const options = shuffle(['morning','evening','storm','desert']);
+  return `
+    <h2 style="font-size:20px;margin-bottom:6px;">Prueba 3 · Listening</h2>
+    <p class="subtitle">Escucha el audio y completa el espacio.</p>
+    ${sceneCardHTML(scene,'ob-listen',false)}
+    <div class="pretest-q" style="margin-top:14px;">
+      <p>"This is a beautiful ___ for the final match."</p>
+      ${mcqHTML(options,'ob-listen-options')}
+    </div>
+    <div id="ob-listen-feedback"></div>
+    <button class="btn btn-primary btn-block" id="ob-listen-next" disabled style="margin-top:14px;">Continuar</button>
+  `;
+}
+function obPretestReading(){
+  const item = SUBTITLE_ITEMS[0];
+  const wordsHtml = item.shownWords.map((w,i)=>`<span class="word-tap" data-idx="${i}">${w}</span>`).join(' ');
+  return `
+    <h2 style="font-size:20px;margin-bottom:6px;">Prueba 4 · Reading</h2>
+    <p class="subtitle">Toca la palabra que está mal en el subtítulo:</p>
+    <div class="subtitle-box" id="ob-read-box">${wordsHtml}</div>
+    <div id="ob-read-feedback"></div>
+    <button class="btn btn-primary btn-block" id="ob-read-next" disabled style="margin-top:14px;">Ver mi resultado</button>
+  `;
+}
+function obResult(){
+  const correctCount = Object.values(onboardData.answers).filter(Boolean).length;
+  const selfBase = onboardData.selfLevel || 1;
+  let levelNum = selfBase;
+  if(correctCount>=3) levelNum = Math.min(6, selfBase+1);
+  if(correctCount<=1) levelNum = Math.max(1, selfBase-1);
+  let levelName = 'Principiante';
+  if(levelNum>=5) levelName='Avanzado'; else if(levelNum>=3) levelName='Intermedio';
+  onboardData.finalLevel = levelNum;
+  return `
+    <div style="text-align:center;">
+      <div style="font-size:40px;margin-bottom:10px;">🔥</div>
+      <h2 style="font-size:22px;">¡Racha de bienvenida activada!</h2>
+      <p class="subtitle">Tu nivel inicial es:</p>
+      <div class="card" style="margin:16px 0;">
+        <div style="font-size:23px;font-weight:800;font-family:var(--font-display);">${levelName}</div>
+        <div class="subtitle" style="margin:0;">Nivel ${levelNum} · ${correctCount}/4 correctas en las pruebas</div>
+      </div>
+      <button class="btn btn-primary btn-block" id="ob-finish">Entrar a EngVibe</button>
+    </div>
+  `;
+}
+function wireOnboarding(){
+  const startBtn = document.getElementById('ob-start');
+  if(startBtn) startBtn.onclick = ()=> nav('onboard', {step:1});
+
+  const nameInput = document.getElementById('ob-name-input');
+  const nameNext = document.getElementById('ob-name-next');
+  if(nameInput){
+    nameInput.oninput = ()=>{ onboardData.name = nameInput.value.trim(); nameNext.disabled = onboardData.name.length===0; };
+    nameNext.disabled = nameInput.value.trim().length===0;
+    nameNext.onclick = ()=> nav('onboard', {step:2});
+  }
+
+  document.querySelectorAll('.chip[data-purpose]').forEach(chip=>{
+    chip.onclick = ()=>{
+      const cat = chip.getAttribute('data-purpose');
+      const idx = onboardData.purpose.indexOf(cat);
+      if(idx>-1) onboardData.purpose.splice(idx,1); else onboardData.purpose.push(cat);
+      chip.classList.toggle('selected');
+      const nextBtn = document.getElementById('ob-purpose-next');
+      if(nextBtn) nextBtn.disabled = onboardData.purpose.length===0;
+    };
+  });
+  const purposeNext = document.getElementById('ob-purpose-next');
+  if(purposeNext){ purposeNext.disabled = onboardData.purpose.length===0; purposeNext.onclick = ()=> nav('onboard', {step:3}); }
+
+  document.querySelectorAll('[data-level]').forEach(btn=>{
+    btn.onclick = ()=>{
+      onboardData.selfLevel = parseInt(btn.getAttribute('data-level'));
+      document.querySelectorAll('[data-level]').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      const nextBtn = document.getElementById('ob-level-next');
+      if(nextBtn) nextBtn.disabled = false;
+    };
+  });
+  const levelNext = document.getElementById('ob-level-next');
+  if(levelNext){ levelNext.disabled = !onboardData.selfLevel; levelNext.onclick = ()=> nav('onboard', {step:4}); }
+
+  const testsStart = document.getElementById('ob-tests-start');
+  if(testsStart) testsStart.onclick = ()=> nav('onboard', {step:5});
+
+  wireSceneCard('ob-speak', STORY_SCENES[0]);
+  const speakingNext = document.getElementById('ob-speaking-next');
+  if(speakingNext) speakingNext.onclick = ()=>{ onboardData.recorded = true; onboardData.answers.speaking = true; nav('onboard', {step:6}); };
+
+  const vocabNext = document.getElementById('ob-vocab-next');
+  wireMCQ('ob-vocab-options','gol', correct=>{
+    onboardData.answers.vocab = correct;
+    document.getElementById('ob-vocab-feedback').innerHTML = correct
+      ? `<div class="feedback-banner good">${ICONS.check} ¡Correcto!</div>`
+      : `<div class="feedback-banner bad">La respuesta correcta era "gol".</div>`;
+    if(vocabNext) vocabNext.disabled = false;
+  });
+  if(vocabNext) vocabNext.onclick = ()=> nav('onboard',{step:7});
+
+  wireSceneCard('ob-listen', STORY_SCENES[2]);
+  const listenNext = document.getElementById('ob-listen-next');
+  wireMCQ('ob-listen-options','morning', correct=>{
+    onboardData.answers.listening = correct;
+    document.getElementById('ob-listen-feedback').innerHTML = correct
+      ? `<div class="feedback-banner good">${ICONS.check} ¡Correcto!</div>`
+      : `<div class="feedback-banner bad">La respuesta correcta era "morning".</div>`;
+    if(listenNext) listenNext.disabled = false;
+  });
+  if(listenNext) listenNext.onclick = ()=> nav('onboard',{step:8});
+
+  const readBox = document.getElementById('ob-read-box');
+  const readNext = document.getElementById('ob-read-next');
+  if(readBox){
+    const item = SUBTITLE_ITEMS[0];
+    readBox.querySelectorAll('.word-tap').forEach(span=>{
+      span.onclick = ()=>{
+        const idx = parseInt(span.getAttribute('data-idx'));
+        if(idx === item.wrongIndex){
+          readBox.querySelectorAll('.word-tap').forEach(s=>s.onclick=null);
+          span.classList.add('found-wrong');
+          span.textContent = item.fix + (span.textContent.endsWith('.')?'.':'');
+          document.getElementById('ob-read-feedback').innerHTML = `<div class="feedback-banner good">${ICONS.check} ¡Correcto! La palabra correcta es "${item.fix}".</div>`;
+          onboardData.answers.reading = true;
+          if(readNext) readNext.disabled = false;
+        } else {
+          span.classList.add('shake');
+          setTimeout(()=>span.classList.remove('shake'), 300);
+          onboardData.answers.reading = false;
+        }
+      };
+    });
+  }
+  if(readNext) readNext.onclick = ()=> nav('onboard',{step:9});
+
+  const finishBtn = document.getElementById('ob-finish');
+  if(finishBtn){
+    finishBtn.onclick = ()=>{
+      state.name = onboardData.name || 'Estudiante';
+      state.categories = onboardData.purpose.length ? onboardData.purpose : ['cine'];
+      state.level = onboardData.finalLevel || 1;
+      state.xp = Math.max(0,(onboardData.finalLevel-1))*150;
+      state.onboarded = true;
+      state.streak = 1;
+      state.lastActiveDate = new Date().toDateString();
+      saveState();
+      nav('hub');
+      toast(`¡Bienvenido, ${state.name}! 🎉`);
+    };
+  }
+}
+
+/* ===================== SHARED CHROME ===================== */
+function renderTopHeader(){
+  return `
+  <div class="top-header"><div class="top-header-inner">
+    <div class="brand"><span class="brand-mark">EV</span>EngVibe</div>
+    <div class="stat-pill-group">
+      <div class="stat-pill">${ICONS.flame} ${state.streak}</div>
+      <div class="stat-pill">${ICONS.spark} ${state.xp}</div>
+      <div class="stat-pill" id="open-shop-coins">${ICONS.coin} ${state.coins}</div>
+    </div>
+  </div></div>`;
+}
+function renderBottomNav(){
+  const items = [
+    {view:'hub', icon:ICONS.home, label:'Inicio'},
+    {view:'achievements', icon:ICONS.trophy, label:'Logros'},
+    {view:'shop', icon:ICONS.bag, label:'Tienda'},
+    {view:'profile', icon:ICONS.user, label:'Perfil'},
+  ];
+  return `<div class="bottom-nav">
+    ${items.map(it=>`<button class="nav-item ${route.view===it.view?'active':''}" data-nav="${it.view}">${it.icon}${it.label}</button>`).join('')}
+  </div>`;
+}
+function wireGlobal(){
+  document.querySelectorAll('[data-nav]').forEach(btn=>{ btn.onclick = ()=> nav(btn.getAttribute('data-nav')); });
+  const shopCoins = document.getElementById('open-shop-coins');
+  if(shopCoins) shopCoins.onclick = ()=> nav('shop');
+}
+
+/* ===================== HUB ===================== */
+let activeHubCategory = state.categories[0] || 'cine';
+
+function renderHub(){
+  const skillLabels = {speaking:['Speaking',ICONS.mic], vocabulary:['Vocabulary',ICONS.cards], listening:['Listening',ICONS.headphones], reading:['Reading & Writing',ICONS.book]};
+  const skillCards = Object.entries(state.skills).map(([k,v])=>`
+    <div class="card skill-card">
+      <div class="skill-name">${skillLabels[k][1]}${skillLabels[k][0]}</div>
+      <div class="skill-bar-track"><div class="skill-bar-fill" style="width:${v}%;"></div></div>
+      <div class="skill-val">${v}/100</div>
+    </div>`).join('');
+
+  const cats = CATEGORIES.map(c=>`<button class="cat-btn ${activeHubCategory===c.id?'active':''}" data-hubcat="${c.id}">${c.emoji} ${c.name}</button>`).join('');
+
+  const nodes = buildRouteNodes();
+  const nodesHtml = nodes.map(n=>`
+    <div class="route-node">
+      <div class="node-circle ${n.done?'done':''} ${n.locked?'locked':''}">${n.icon}</div>
+      <div class="node-info"><div class="n-title">${n.title}</div><div class="n-sub">${n.sub}</div></div>
+    </div>`).join('');
+
+  const modules = [
+    {view:'speaking', icon:ICONS.mic, name:'Speaking', sub:'Escucha y graba tu voz'},
+    {view:'vocabulary', icon:ICONS.cards, name:'Vocabulary', sub:'Tarjetas y frases'},
+    {view:'listening', icon:ICONS.headphones, name:'Listening', sub:'Escucha y responde'},
+    {view:'reading', icon:ICONS.book, name:'Reading & Writing', sub:'Historias y subtítulos'},
+  ];
+  const modulesHtml = modules.map(m=>`
+    <button class="card module-btn" data-nav="${m.view}">
+      <div class="m-icon">${m.icon}</div>
+      <div class="m-name">${m.name}</div>
+      <div class="m-sub">${m.sub}</div>
+    </button>`).join('');
+
+  return `
+  <div class="screen">
+    <div class="hero-strip">
+      <h2>Hola, ${state.name} 👋</h2>
+      <p>Nivel ${state.level} · Sigue tu racha de ${state.streak} día${state.streak===1?'':'s'}</p>
+    </div>
+    <div class="section-title">Tus habilidades</div>
+    <div class="skill-grid">${skillCards}</div>
+    <div class="section-title">Categorías</div>
+    <div class="category-scroll">${cats}</div>
+    <div class="section-title">Mapa de ruta</div>
+    <div class="card"><div class="route-path">${nodesHtml}</div></div>
+    <div class="section-title">Módulos</div>
+    <div class="module-grid">${modulesHtml}</div>
+  </div>`;
+}
+function buildRouteNodes(){
+  const total = state.unlockedNodes + 2; // muestra 2 pasos futuros más allá del actual
+  return Array.from({length: Math.min(total, ROUTE_STEPS.length + state.unlockedNodes)}).map((_,i)=>{
+    const step = ROUTE_STEPS[i % ROUTE_STEPS.length];
+    const cycle = Math.floor(i / ROUTE_STEPS.length) + 1;
+    return {
+      title: cycle>1 ? `${step.title} · Ronda ${cycle}` : step.title,
+      sub: i < state.unlockedNodes-1 ? 'Completado' : (i===state.unlockedNodes-1 ? 'Disponible ahora' : 'Bloqueado'),
+      icon: i < state.unlockedNodes-1 ? ICONS.check : (i > state.unlockedNodes-1 ? ICONS.lock || '🔒' : step.icon),
+      done: i < state.unlockedNodes-1,
+      locked: i > state.unlockedNodes-1,
+    };
+  }).slice(0,8);
+}
+function advanceRoute(){
+  state.unlockedNodes += 1;
+  state.stats.lessonsDone += 1;
+  saveState();
+  checkAchievements();
+}
+
+/* ===================== SPEAKING MODULE ===================== */
+let speakingState = { sceneId: STORY_SCENES[0].id, mediaRecorder:null, chunks:[], recordedUrl:null, recording:false };
+
+function renderSpeaking(){
+  const scene = STORY_SCENES.find(s=>s.id===speakingState.sceneId) || STORY_SCENES[0];
+  const thumbs = STORY_SCENES.map(s=>`
+    <button class="scene-thumb ${s.id===scene.id?'active':''}" data-scene="${s.id}">
+      <div class="st-visual">${s.emoji}</div>
+      <div class="st-label">${s.title}</div>
+    </button>`).join('');
+
+  return `
+  <div class="screen">
+    <div class="module-header"><button class="back-btn" data-nav="hub">${ICONS.back}</button><h2 style="font-size:19px;">Speaking</h2></div>
+    <div class="scene-picker">${thumbs}</div>
+    ${scene.videoSrc ? videoSceneHTML(scene,'speak') : sceneCardHTML(scene,'speak',false)}
+    <p style="margin-top:14px;font-weight:700;">"${scene.sentence}"</p>
+    <p class="subtitle" id="speaking-translation" style="margin-top:4px;display:none;">${scene.translation}</p>
+    <button class="btn btn-outline btn-sm" id="toggle-translation" style="margin-top:8px;">Mostrar traducción</button>
+
+    <div class="mic-note" id="mic-note">${ICONS.mic} Al grabar, pediremos acceso a tu micrófono. Acepta el permiso cuando el navegador lo solicite.</div>
+    <div id="insecure-warning"></div>
+
+    <div class="rec-controls">
+      <button class="btn btn-primary" id="start-record">${ICONS.mic} Grabar mi voz</button>
+      <button class="btn btn-outline" id="stop-record" style="display:none;"><span class="rec-dot"></span> Detener</button>
+      <button class="btn btn-outline" id="play-dub" style="display:none;">${ICONS.play} ${scene.videoSrc ? 'Reproducir mi doblaje sobre la escena' : 'Reproducir mi grabación'}</button>
+    </div>
+    <div id="record-status" class="subtitle"></div>
+    <div id="speaking-feedback"></div>
+  </div>`;
+}
+function wireSpeaking(){
+  const scene = STORY_SCENES.find(s=>s.id===speakingState.sceneId) || STORY_SCENES[0];
+  if(!scene.videoSrc) wireSceneCard('speak', scene);
+  document.querySelectorAll('.scene-thumb').forEach(btn=>{
+    btn.onclick = ()=>{ speakingState.sceneId = btn.getAttribute('data-scene'); speakingState.recordedUrl = null; render(); };
+  });
+  const toggleT = document.getElementById('toggle-translation');
+  if(toggleT){
+    toggleT.onclick = ()=>{
+      const t = document.getElementById('speaking-translation');
+      const showing = t.style.display !== 'none';
+      t.style.display = showing ? 'none' : 'block';
+      toggleT.textContent = showing ? 'Mostrar traducción' : 'Ocultar traducción';
+    };
+  }
+
+  const startBtn = document.getElementById('start-record');
+  const stopBtn = document.getElementById('stop-record');
+  const playDubBtn = document.getElementById('play-dub');
+  const statusEl = document.getElementById('record-status');
+  const warningEl = document.getElementById('insecure-warning');
+
+  const insecure = !window.isSecureContext;
+  if(insecure && warningEl){
+    warningEl.innerHTML = `<div class="feedback-banner bad">⚠️ Este archivo se abrió de forma local, así que el navegador bloquea el micrófono sin mostrar el diálogo de permiso. Abre la versión publicada: <a href="${PUBLISHED_APP_URL}" target="_blank" style="color:var(--danger);text-decoration:underline;">${PUBLISHED_APP_URL}</a></div>`;
+    if(startBtn) startBtn.disabled = true;
+  }
+
+  if(startBtn){
+    startBtn.onclick = async ()=>{
+      if(!window.isSecureContext){ statusEl.textContent = 'El micrófono solo funciona en la versión publicada en línea.'; return; }
+      if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){ statusEl.textContent = 'Tu navegador no soporta grabación de audio.'; return; }
+      try{
+        const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+        speakingState.chunks = [];
+        const mr = new MediaRecorder(stream);
+        speakingState.mediaRecorder = mr;
+        mr.ondataavailable = e=>{ if(e.data.size>0) speakingState.chunks.push(e.data); };
+        mr.onstop = ()=>{
+          const blob = new Blob(speakingState.chunks, {type:'audio/webm'});
+          speakingState.recordedUrl = URL.createObjectURL(blob);
+          stream.getTracks().forEach(t=>t.stop());
+          playDubBtn.style.display = 'inline-flex';
+          statusEl.textContent = '¡Grabación lista!';
+          state.stats.recordings += 1;
+          addXP(10); bumpSkill('speaking',4);
+          saveState(); checkAchievements();
+        };
+        mr.start();
+        speakingState.recording = true;
+        startBtn.style.display='none'; stopBtn.style.display='inline-flex';
+        statusEl.innerHTML = '<span class="rec-dot"></span> Grabando... habla ahora.';
+      }catch(err){
+        if(err && err.name==='NotAllowedError') statusEl.textContent = 'Bloqueaste el permiso de micrófono. Cambia el permiso a "Permitir" en la configuración del sitio y recarga.';
+        else if(err && err.name==='NotFoundError') statusEl.textContent = 'No se encontró ningún micrófono en este dispositivo.';
+        else statusEl.textContent = 'No se pudo acceder al micrófono.';
+      }
+    };
+  }
+  if(stopBtn){
+    stopBtn.onclick = ()=>{
+      if(speakingState.mediaRecorder && speakingState.recording){ speakingState.mediaRecorder.stop(); speakingState.recording = false; }
+      startBtn.style.display='inline-flex'; stopBtn.style.display='none';
+    };
+  }
+  if(playDubBtn){
+    playDubBtn.onclick = ()=>{
+      if(!speakingState.recordedUrl) return;
+      const userAudio = new Audio(speakingState.recordedUrl);
+      const videoEl = document.getElementById('speak-video');
+      if(videoEl){
+        videoEl.muted = true;
+        videoEl.currentTime = 0;
+        videoEl.play();
+        userAudio.play();
+        userAudio.onended = ()=>{ videoEl.muted = false; };
+        document.getElementById('speaking-feedback').innerHTML = `<div class="feedback-banner good">${ICONS.check} Reproduciendo la escena con tu doblaje. ¡Autoevalúate!</div>`;
+      } else {
+        userAudio.play();
+        document.getElementById('speaking-feedback').innerHTML = `<div class="feedback-banner good">${ICONS.check} Reproduciendo tu grabación. ¡Autoevalúate!</div>`;
+      }
+    };
+  }
+}
+
+/* ===================== VOCABULARY MODULE ===================== */
+let vocabState = { mode:'cards', category: state.categories[0] || 'cine', cardIndex:0, flipped:false, buildIndex:0, placed:[], wordOrder:null };
+
+function renderVocabulary(){
+  return `
+  <div class="screen">
+    <div class="module-header"><button class="back-btn" data-nav="hub">${ICONS.back}</button><h2 style="font-size:19px;">Vocabulary</h2></div>
+    <div class="category-scroll">${CATEGORIES.map(c=>`<button class="cat-btn ${vocabState.category===c.id?'active':''}" data-vcat="${c.id}">${c.emoji} ${c.name}</button>`).join('')}</div>
+    <div class="shop-tabs" style="margin-top:16px;">
+      <button class="btn ${vocabState.mode==='cards'?'btn-primary':'btn-outline'} btn-sm" data-vmode="cards">Tarjetas</button>
+      <button class="btn ${vocabState.mode==='build'?'btn-primary':'btn-outline'} btn-sm" data-vmode="build">Forma la oración</button>
+    </div>
+    <div style="margin-top:18px;">${vocabState.mode==='cards' ? renderVocabCards() : renderSentenceBuilder()}</div>
+  </div>`;
+}
+function renderVocabCards(){
+  const list = VOCAB_BY_CATEGORY[vocabState.category];
+  const item = list[vocabState.cardIndex % list.length];
+  return `
+    <div class="flashcard" id="flip-card">
+      ${vocabState.flipped ? `<div class="fc-word">${item.t}</div><div class="fc-example">${item.ex}</div>` : `<div class="fc-word">${item.w}</div><div class="fc-sub">Toca para ver el significado</div>`}
+    </div>
+    <div class="card-nav">
+      <button class="btn btn-outline btn-sm" id="vocab-prev">← Anterior</button>
+      <span class="progress-count">${(vocabState.cardIndex % list.length)+1} / ${list.length}</span>
+      <button class="btn btn-outline btn-sm" id="vocab-next">Siguiente →</button>
+    </div>`;
+}
+function renderSentenceBuilder(){
+  const item = SENTENCE_BUILD[vocabState.buildIndex % SENTENCE_BUILD.length];
+  if(!vocabState.wordOrder){ vocabState.wordOrder = shuffle(item.parts.map((_,i)=>i)); }
+  const remainingOrder = vocabState.wordOrder.filter(i=> !vocabState.placed.includes(i));
+  return `
+    <p class="subtitle">Ordena las palabras para formar una oración correcta.</p>
+    <div class="answer-slot" id="answer-slot">${vocabState.placed.map(i=>`<button class="word-chip placed" data-idx="${i}">${item.parts[i]}</button>`).join('')}</div>
+    <div class="word-bank" id="word-bank">${remainingOrder.map(i=>`<button class="word-chip" data-idx="${i}">${item.parts[i]}</button>`).join('')}</div>
+    <div id="build-feedback"></div>
+    <div class="card-nav">
+      <button class="btn btn-outline btn-sm" id="build-reset">Reiniciar</button>
+      <button class="btn btn-primary btn-sm" id="build-check">Comprobar</button>
+    </div>`;
+}
+function wireVocabulary(){
+  document.querySelectorAll('[data-vcat]').forEach(btn=>{ btn.onclick = ()=>{ vocabState.category = btn.getAttribute('data-vcat'); vocabState.cardIndex=0; vocabState.flipped=false; render(); }; });
+  document.querySelectorAll('[data-vmode]').forEach(btn=>{ btn.onclick = ()=>{ vocabState.mode = btn.getAttribute('data-vmode'); render(); }; });
+  const flipCard = document.getElementById('flip-card');
+  if(flipCard){
+    flipCard.onclick = ()=>{
+      vocabState.flipped = !vocabState.flipped;
+      if(vocabState.flipped){ state.stats.cardsSeen += 1; addXP(2); saveState(); checkAchievements(); }
+      render();
+    };
+  }
+  const prevBtn = document.getElementById('vocab-prev');
+  const nextBtn = document.getElementById('vocab-next');
+  if(prevBtn) prevBtn.onclick = ()=>{ const list=VOCAB_BY_CATEGORY[vocabState.category]; vocabState.cardIndex = (vocabState.cardIndex-1+list.length)%list.length; vocabState.flipped=false; render(); };
+  if(nextBtn) nextBtn.onclick = ()=>{ const list=VOCAB_BY_CATEGORY[vocabState.category]; vocabState.cardIndex = (vocabState.cardIndex+1)%list.length; vocabState.flipped=false; render(); };
+
+  document.querySelectorAll('#word-bank .word-chip').forEach(chip=>{ chip.onclick = ()=>{ vocabState.placed.push(parseInt(chip.getAttribute('data-idx'))); render(); }; });
+  document.querySelectorAll('#answer-slot .word-chip').forEach(chip=>{ chip.onclick = ()=>{ const idx = parseInt(chip.getAttribute('data-idx')); vocabState.placed = vocabState.placed.filter(i=>i!==idx); render(); }; });
+  const resetBtn = document.getElementById('build-reset');
+  if(resetBtn) resetBtn.onclick = ()=>{ vocabState.placed = []; render(); };
+  const checkBtn = document.getElementById('build-check');
+  if(checkBtn){
+    checkBtn.onclick = ()=>{
+      const item = SENTENCE_BUILD[vocabState.buildIndex % SENTENCE_BUILD.length];
+      const built = vocabState.placed.map(i=>item.parts[i]).join(' ');
+      const feedback = document.getElementById('build-feedback');
+      if(built === item.answer){
+        feedback.innerHTML = `<div class="feedback-banner good">${ICONS.check} ¡Correcto! "${built}"</div>`;
+        addXP(8); bumpSkill('vocabulary',5); addCoins(3); registerCorrect();
+        vocabState.buildIndex += 1; vocabState.placed = []; vocabState.wordOrder = null;
+        advanceRoute();
+        setTimeout(render, 900);
+      } else if(vocabState.placed.length === item.parts.length){
+        feedback.innerHTML = `<div class="feedback-banner bad">Casi. La oración correcta es: "${item.answer}"</div>`;
+        setTimeout(()=>{ vocabState.placed = []; render(); }, 1400);
+      } else {
+        feedback.innerHTML = `<div class="feedback-banner bad">Coloca todas las palabras primero.</div>`;
+      }
+    };
+  }
+}
+
+/* ===================== LISTENING MODULE ===================== */
+let listeningState = { itemIndex:0 };
+
+function renderListening(){
+  const item = LISTENING_ITEMS[listeningState.itemIndex % LISTENING_ITEMS.length];
+  const scene = STORY_SCENES.find(s=>s.id===item.sceneId);
+  if(!listeningState.shuffledOptions || listeningState._lastIndex !== listeningState.itemIndex){
+    listeningState.shuffledOptions = item.options ? shuffle(item.options) : null;
+    listeningState._lastIndex = listeningState.itemIndex;
+  }
+  return `
+  <div class="screen">
+    <div class="module-header"><button class="back-btn" data-nav="hub">${ICONS.back}</button><h2 style="font-size:19px;">Listening</h2></div>
+    <p class="subtitle">Nivel: ${item.level==='basic'?'Básico (opción múltiple)':'Avanzado (respuesta libre)'}</p>
+    ${sceneCardHTML(scene,'listen',false)}
+    <div class="pretest-q" style="margin-top:16px;">
+      <p>${item.question}</p>
+      ${item.freeform ? `
+        <textarea class="free-answer" id="listen-free" placeholder="Escribe lo que entendiste, en tus propias palabras..."></textarea>
+        <button class="btn btn-primary btn-block" id="listen-submit-free" style="margin-top:12px;">Enviar respuesta</button>
+      ` : mcqHTML(listeningState.shuffledOptions, 'listen-options')}
+    </div>
+    <div id="listen-feedback"></div>
+  </div>`;
+}
+function wireListening(){
+  const item = LISTENING_ITEMS[listeningState.itemIndex % LISTENING_ITEMS.length];
+  const scene = STORY_SCENES.find(s=>s.id===item.sceneId);
+  wireSceneCard('listen', scene);
+
+  const nextItem = ()=>{ listeningState.itemIndex += 1; advanceRoute(); setTimeout(render, 1100); };
+
+  const freeSubmit = document.getElementById('listen-submit-free');
+  if(freeSubmit){
+    freeSubmit.onclick = ()=>{
+      const val = document.getElementById('listen-free').value.trim();
+      const feedback = document.getElementById('listen-feedback');
+      if(val.length < 5){ feedback.innerHTML = `<div class="feedback-banner bad">Intenta escribir una respuesta un poco más completa.</div>`; return; }
+      freeSubmit.disabled = true;
+      feedback.innerHTML = `<div class="feedback-banner good">${ICONS.check} Respuesta registrada. ¡Buen trabajo describiendo la escena!</div>`;
+      addXP(12); bumpSkill('listening',6); addCoins(4); registerCorrect();
+      nextItem();
+    };
+  }
+  if(!item.freeform){
+    wireMCQ('listen-options', item.answer, correct=>{
+      const feedback = document.getElementById('listen-feedback');
+      if(correct){
+        feedback.innerHTML = `<div class="feedback-banner good">${ICONS.check} ¡Correcto!</div>`;
+        addXP(8); bumpSkill('listening',5); addCoins(3); registerCorrect();
+        nextItem();
+      } else {
+        feedback.innerHTML = `<div class="feedback-banner bad">La respuesta correcta era "${item.answer}".</div>`;
+        setTimeout(nextItem, 1400);
+      }
+    });
+  }
+}
+
+/* ===================== READING & WRITING MODULE ===================== */
+let readingState = { mode:'comic', comicNode: COMIC_STORY.start, subtitleIndex:0 };
+
+function renderReading(){
+  return `
+  <div class="screen">
+    <div class="module-header"><button class="back-btn" data-nav="hub">${ICONS.back}</button><h2 style="font-size:19px;">Reading & Writing</h2></div>
+    <div class="shop-tabs">
+      <button class="btn ${readingState.mode==='comic'?'btn-primary':'btn-outline'} btn-sm" data-rmode="comic">Interactive Comic</button>
+      <button class="btn ${readingState.mode==='subtitle'?'btn-primary':'btn-outline'} btn-sm" data-rmode="subtitle">Subtitle Repair</button>
+    </div>
+    <div style="margin-top:18px;">${readingState.mode==='comic' ? renderComic() : renderSubtitleRepair()}</div>
+  </div>`;
+}
+function renderComic(){
+  const node = COMIC_STORY.nodes[readingState.comicNode];
+  return `
+    <div class="comic-panel">
+      <div class="comic-scene"><div class="cs-emoji">${node.emoji}</div><p>${node.text}</p></div>
+      <div class="comic-choices">
+        ${node.choices.length ? node.choices.map(c=>`<button class="btn btn-outline btn-block" data-comic-choice="${c.next}">${c.label}</button>`).join('')
+          : `<button class="btn btn-primary btn-block" id="comic-restart">Reiniciar historia</button>`}
+      </div>
+    </div>`;
+}
+function renderSubtitleRepair(){
+  const item = SUBTITLE_ITEMS[readingState.subtitleIndex % SUBTITLE_ITEMS.length];
+  const wordsHtml = item.shownWords.map((w,i)=>`<span class="word-tap" data-idx="${i}">${w}</span>`).join(' ');
+  return `
+    <p class="subtitle">Toca la palabra que está mal en el subtítulo.</p>
+    <div class="subtitle-box" id="subtitle-box">${wordsHtml}</div>
+    <div id="subtitle-feedback"></div>`;
+}
+function wireReading(){
+  document.querySelectorAll('[data-rmode]').forEach(btn=>{ btn.onclick = ()=>{ readingState.mode = btn.getAttribute('data-rmode'); render(); }; });
+  document.querySelectorAll('[data-comic-choice]').forEach(btn=>{
+    btn.onclick = ()=>{
+      readingState.comicNode = btn.getAttribute('data-comic-choice');
+      addXP(6); bumpSkill('reading',4);
+      if(!COMIC_STORY.nodes[readingState.comicNode].choices.length){ advanceRoute(); addCoins(5); }
+      render();
+    };
+  });
+  const restartBtn = document.getElementById('comic-restart');
+  if(restartBtn) restartBtn.onclick = ()=>{ readingState.comicNode = COMIC_STORY.start; render(); };
+
+  const box = document.getElementById('subtitle-box');
+  if(box){
+    const item = SUBTITLE_ITEMS[readingState.subtitleIndex % SUBTITLE_ITEMS.length];
+    box.querySelectorAll('.word-tap').forEach(span=>{
+      span.onclick = ()=>{
+        const idx = parseInt(span.getAttribute('data-idx'));
+        const feedback = document.getElementById('subtitle-feedback');
+        if(idx === item.wrongIndex){
+          box.querySelectorAll('.word-tap').forEach(s=>s.onclick=null);
+          span.classList.add('found-wrong');
+          span.textContent = item.fix + (span.textContent.endsWith('.')?'.':'');
+          feedback.innerHTML = `<div class="feedback-banner good">${ICONS.check} ¡Correcto! La palabra correcta es "${item.fix}".</div>`;
+          addXP(10); bumpSkill('reading',5); addCoins(4); registerCorrect();
+          readingState.subtitleIndex += 1;
+          advanceRoute();
+          setTimeout(render, 1100);
+        } else {
+          span.classList.add('shake');
+          setTimeout(()=>span.classList.remove('shake'), 300);
+        }
+      };
+    });
+  }
+}
+
+/* ===================== SHOP ===================== */
+let shopTab = 'avatars';
+function renderShop(){
+  const grid = shopTab==='avatars' ? SHOP_AVATARS.map(a=>{
+    const owned = state.ownedItems.includes(a.id);
+    const equipped = state.avatar === a.emoji;
+    return `<div class="card shop-item">
+      <div class="si-emoji">${a.emoji}</div>
+      <div class="si-name">${a.name}</div>
+      <div class="si-price">${owned ? 'Adquirido' : `${a.type==='coins'?ICONS.coin:ICONS.spark} ${a.cost}`}</div>
+      <button class="btn ${equipped?'btn-primary':'btn-outline'} btn-sm btn-block" data-buy-avatar="${a.id}">${equipped ? 'Equipado' : owned ? 'Usar' : 'Comprar'}</button>
+    </div>`;
+  }).join('') : SHOP_THEMES.map(t=>{
+    const owned = state.ownedItems.includes(t.id);
+    const equipped = state.theme === t.value;
+    return `<div class="card shop-item">
+      <div class="theme-swatch" style="background:${t.color};"></div>
+      <div class="si-name">${t.name}</div>
+      <div class="si-price">${owned ? 'Adquirido' : (t.cost===0?'Gratis':`${t.type==='coins'?ICONS.coin:ICONS.spark} ${t.cost}`)}</div>
+      <button class="btn ${equipped?'btn-primary':'btn-outline'} btn-sm btn-block" data-buy-theme="${t.id}">${equipped ? 'Equipado' : owned ? 'Usar' : 'Comprar'}</button>
+    </div>`;
+  }).join('');
+
+  return `
+  <div class="screen">
+    <div class="module-header"><button class="back-btn" data-nav="hub">${ICONS.back}</button><h2 style="font-size:19px;">Tienda</h2></div>
+    <p class="subtitle">${ICONS.coin} ${state.coins} monedas · ${ICONS.spark} ${state.xp} XP</p>
+    <div class="shop-tabs" style="margin-top:14px;">
+      <button class="btn ${shopTab==='avatars'?'btn-primary':'btn-outline'} btn-sm" data-shoptab="avatars">Avatares</button>
+      <button class="btn ${shopTab==='themes'?'btn-primary':'btn-outline'} btn-sm" data-shoptab="themes">Temas</button>
+    </div>
+    <div class="shop-grid" style="margin-top:16px;">${grid}</div>
+  </div>`;
+}
+function buyItem(id, pool, applyFn){
+  const item = pool.find(x=>x.id===id);
+  if(!item) return;
+  const alreadyOwned = state.ownedItems.indexOf(id) !== -1;
+  if(alreadyOwned){ applyFn(item); saveState(); render(); return; }
+  const balanceField = item.type === 'coins' ? 'coins' : 'xp';
+  const price = item.cost;
+  if(state[balanceField] < price){ toast('No tienes suficiente saldo para este ítem.'); return; }
+  state[balanceField] = state[balanceField] - price;
+  state.ownedItems = state.ownedItems.concat([id]);
+  applyFn(item);
+  saveState();
+  checkAchievements();
+  toast(`¡Compraste ${item.name}!`);
+  render();
+}
+function wireShop(){
+  document.querySelectorAll('[data-shoptab]').forEach(btn=>{ btn.onclick = ()=>{ shopTab = btn.getAttribute('data-shoptab'); render(); }; });
+  document.querySelectorAll('[data-buy-avatar]').forEach(btn=>{
+    btn.onclick = ()=> buyItem(btn.getAttribute('data-buy-avatar'), SHOP_AVATARS, item=>{ state.avatar = item.emoji; });
+  });
+  document.querySelectorAll('[data-buy-theme]').forEach(btn=>{
+    btn.onclick = ()=> buyItem(btn.getAttribute('data-buy-theme'), SHOP_THEMES, item=>{ state.theme = item.value; });
+  });
+}
+
+/* ===================== ACHIEVEMENTS ===================== */
+function renderAchievements(){
+  const list = ACHIEVEMENTS.map(a=>{
+    const unlocked = state.achievementsUnlocked.includes(a.id);
+    return `<div class="card achv-item ${unlocked?'':'locked'}">
+      <div class="achv-emoji">${a.emoji}</div>
+      <div class="achv-info"><div class="a-name">${a.name}</div><div class="a-sub">${a.sub}</div></div>
+    </div>`;
+  }).join('');
+  return `
+  <div class="screen">
+    <div class="module-header"><button class="back-btn" data-nav="hub">${ICONS.back}</button><h2 style="font-size:19px;">Logros</h2></div>
+    <p class="subtitle">${state.achievementsUnlocked.length} de ${ACHIEVEMENTS.length} desbloqueados</p>
+    <div class="achv-list">${list}</div>
+  </div>`;
+}
+
+/* ===================== PROFILE ===================== */
+function renderProfile(){
+  return `
+  <div class="screen">
+    <div class="module-header"><button class="back-btn" data-nav="hub">${ICONS.back}</button><h2 style="font-size:19px;">Perfil</h2></div>
+    <div class="profile-row">
+      <div class="avatar-big">${state.avatar}</div>
+      <div><div style="font-size:18px;font-weight:700;">${state.name}</div><div class="subtitle" style="margin:0;">Nivel ${state.level}</div></div>
+    </div>
+    <div class="stat-block">
+      <div class="card sb-item"><div class="sb-num">${state.streak}</div><div class="sb-label">RACHA</div></div>
+      <div class="card sb-item"><div class="sb-num">${state.xp}</div><div class="sb-label">XP</div></div>
+      <div class="card sb-item"><div class="sb-num">${state.coins}</div><div class="sb-label">MONEDAS</div></div>
+    </div>
+    <div class="section-title">Categorías favoritas</div>
+    <div class="category-scroll">${CATEGORIES.filter(c=>state.categories.includes(c.id)).map(c=>`<div class="cat-btn active">${c.emoji} ${c.name}</div>`).join('')}</div>
+    <div class="section-title">Datos</div>
+    <div class="card" style="display:flex;flex-direction:column;gap:10px;">
+      <div class="subtitle" style="margin:0;">Lecciones completadas: ${state.stats.lessonsDone}</div>
+      <div class="subtitle" style="margin:0;">Grabaciones de voz: ${state.stats.recordings}</div>
+      <div class="subtitle" style="margin:0;">Tarjetas revisadas: ${state.stats.cardsSeen}</div>
+      <div class="subtitle" style="margin:0;">Respuestas correctas: ${state.stats.correctAnswers}</div>
+    </div>
+    <button class="btn btn-outline btn-block" id="reset-progress" style="margin-top:22px;">Reiniciar progreso</button>
+  </div>`;
+}
+function wireProfile(){
+  const resetBtn = document.getElementById('reset-progress');
+  if(resetBtn){
+    resetBtn.onclick = ()=>{
+      if(confirm('¿Seguro que quieres borrar todo tu progreso?')){
+        localStorage.removeItem(STORAGE_KEY);
+        state = defaultState();
+        route = {view:'onboard', step:0};
+        onboardData = { name:'', purpose:[], selfLevel:'', answers:{}, recorded:false };
+        render();
+      }
+    };
+  }
+}
+
+/* ===================== VIEW WIRING DISPATCH ===================== */
+function wireView(){
+  switch(route.view){
+    case 'speaking': wireSpeaking(); break;
+    case 'vocabulary': wireVocabulary(); break;
+    case 'listening': wireListening(); break;
+    case 'reading': wireReading(); break;
+    case 'shop': wireShop(); break;
+    case 'profile': wireProfile(); break;
+    case 'hub':
+      document.querySelectorAll('[data-hubcat]').forEach(btn=>{ btn.onclick = ()=>{ activeHubCategory = btn.getAttribute('data-hubcat'); render(); }; });
+      break;
+  }
+}
+
+/* ===================== INIT ===================== */
+render();
+</script>
+</body>
+</html>
