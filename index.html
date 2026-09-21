@@ -274,9 +274,19 @@ const STORY_SCENES = [
   {id:'musica2', category:'musica', emoji:'🎤', title:'Noche de concierto', sentence:"The crowd sang every word of the chorus.", translation:"El público cantó cada palabra del coro."},
   {id:'tecnologia1', category:'tecnologia', emoji:'💻', title:'Lanzamiento del producto', sentence:"We are surrounded by the very technology we imagined.", translation:"Estamos rodeados por la misma tecnología que imaginamos."},
   {id:'tecnologia2', category:'tecnologia', emoji:'🤖', title:'Demo en vivo', sentence:"This device updates itself while you sleep.", translation:"Este dispositivo se actualiza solo mientras duermes."},
-  // Escena propia del usuario, subida junto al HTML en el mismo repositorio de GitHub.
-  // Reemplaza "sentence" y "translation" por la frase real de tu video (debe ser texto original tuyo, no diálogo de una película con derechos de autor).
-  {id:'escena1', category:'cine', emoji:'🎥', title:'Escena 1 (tuya)', videoSrc:'escena-1.mp4', sentence:"ESCRIBE AQUÍ TU FRASE EN INGLÉS", translation:"ESCRIBE AQUÍ LA TRADUCCIÓN"},
+];
+
+// Escenas propias del usuario para el módulo Speaking (videos subidos junto al HTML en GitHub,
+// ej. escena-1.mp4 ... escena-6.mp4). Los textos de "sentence"/"translation" son de relleno:
+// edítalos aquí directamente para que coincidan con lo que realmente dice cada video
+// (debe ser texto original, no diálogo de una película con derechos de autor).
+const SPEAKING_SCENES = [
+  {id:'escena1', category:'cine', emoji:'🎥', title:'Escena 1', videoSrc:'escena-1.mp4', sentence:"ESCRIBE AQUÍ TU FRASE EN INGLÉS", translation:"ESCRIBE AQUÍ LA TRADUCCIÓN"},
+  {id:'escena2', category:'cine', emoji:'🎬', title:'Escena 2', videoSrc:'escena-2.mp4', sentence:"This is our second scene.", translation:"Esta es nuestra segunda escena."},
+  {id:'escena3', category:'deportes', emoji:'⚽', title:'Escena 3', videoSrc:'escena-3.mp4', sentence:"We practiced this part many times.", translation:"Practicamos esta parte muchas veces."},
+  {id:'escena4', category:'deportes', emoji:'🏆', title:'Escena 4', videoSrc:'escena-4.mp4', sentence:"Everyone did a great job today.", translation:"Todos hicieron un gran trabajo hoy."},
+  {id:'escena5', category:'musica', emoji:'🎵', title:'Escena 5', videoSrc:'escena-5.mp4', sentence:"This scene means a lot to us.", translation:"Esta escena significa mucho para nosotros."},
+  {id:'escena6', category:'tecnologia', emoji:'💻', title:'Escena 6', videoSrc:'escena-6.mp4', sentence:"We hope you enjoy watching this.", translation:"Esperamos que disfruten viendo esto."},
 ];
 
 const VOCAB_BY_CATEGORY = {
@@ -993,11 +1003,11 @@ function advanceRoute(){
 }
 
 /* ===================== SPEAKING MODULE ===================== */
-let speakingState = { sceneId: STORY_SCENES[0].id, mediaRecorder:null, chunks:[], recordedUrl:null, recording:false };
+let speakingState = { sceneId: SPEAKING_SCENES[0].id, mediaRecorder:null, chunks:[], recordedUrl:null, recording:false };
 
 function renderSpeaking(){
-  const scene = STORY_SCENES.find(s=>s.id===speakingState.sceneId) || STORY_SCENES[0];
-  const thumbs = STORY_SCENES.map(s=>`
+  const scene = SPEAKING_SCENES.find(s=>s.id===speakingState.sceneId) || SPEAKING_SCENES[0];
+  const thumbs = SPEAKING_SCENES.map(s=>`
     <button class="scene-thumb ${s.id===scene.id?'active':''}" data-scene="${s.id}">
       <div class="st-visual">${s.emoji}</div>
       <div class="st-label">${s.title}</div>
@@ -1025,7 +1035,7 @@ function renderSpeaking(){
   </div>`;
 }
 function wireSpeaking(){
-  const scene = STORY_SCENES.find(s=>s.id===speakingState.sceneId) || STORY_SCENES[0];
+  const scene = SPEAKING_SCENES.find(s=>s.id===speakingState.sceneId) || SPEAKING_SCENES[0];
   if(!scene.videoSrc) wireSceneCard('speak', scene);
   document.querySelectorAll('.scene-thumb').forEach(btn=>{
     btn.onclick = ()=>{ speakingState.sceneId = btn.getAttribute('data-scene'); speakingState.recordedUrl = null; render(); };
