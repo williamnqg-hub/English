@@ -280,13 +280,17 @@ const STORY_SCENES = [
 // ej. escena-1.mp4 ... escena-6.mp4). Los textos de "sentence"/"translation" son de relleno:
 // edítalos aquí directamente para que coincidan con lo que realmente dice cada video
 // (debe ser texto original, no diálogo de una película con derechos de autor).
+// "phraseSegments": lista de tramos (en segundos) donde se silencia el audio original y entra tu
+// grabación. Puedes poner uno o varios tramos, ej: [{start:4, end:5.15}, {start:7, end:8.4}]
+// silencia del segundo 4 al 5.15, deja sonar el original del 5.15 al 7, y vuelve a silenciar
+// del 7 al 8.4. Fuera de esos tramos, el video suena con su audio normal.
 const SPEAKING_SCENES = [
-  {id:'escena1', category:'cine', emoji:'🎥', title:'Avenger End Game', videoSrc:'escena-1.mp4', sentence:"I am inevitable.   And I am Ironman.", translation:"Yo soy inevitable.   Y yo soy Ironman."},
-  {id:'escena2', category:'cine', emoji:'🎬', title:'Escena 2', videoSrc:'escena-2.mp4', sentence:"This is our second scene.", translation:"Esta es nuestra segunda escena."},
-  {id:'escena3', category:'deportes', emoji:'⚽', title:'Escena 3', videoSrc:'escena-3.mp4', sentence:"We practiced this part many times.", translation:"Practicamos esta parte muchas veces."},
-  {id:'escena4', category:'deportes', emoji:'🏆', title:'Escena 4', videoSrc:'escena-4.mp4', sentence:"Everyone did a great job today.", translation:"Todos hicieron un gran trabajo hoy."},
-  {id:'escena5', category:'musica', emoji:'🎵', title:'Escena 5', videoSrc:'escena-5.mp4', sentence:"This scene means a lot to us.", translation:"Esta escena significa mucho para nosotros."},
-  {id:'escena6', category:'tecnologia', emoji:'💻', title:'Escena 6', videoSrc:'escena-6.mp4', sentence:"We hope you enjoy watching this.", translation:"Esperamos que disfruten viendo esto."},
+  {id:'escena1', category:'cine', emoji:'🎥', title:'Avengers End Game', videoSrc:'escena-1.mp4', phraseSegments:[{start:2.3,end:5}, {start:25.8,end:35}], sentence:"I am inevitable. And I am Ironman.", translation:"Yo soy inevitable. Y yo soy Ironman."},
+  {id:'escena2', category:'cine', emoji:'🎬', title:'Escena 2', videoSrc:'escena-2.mp4', phraseSegments:[{start:0,end:3}], sentence:"This is our second scene.", translation:"Esta es nuestra segunda escena."},
+  {id:'escena3', category:'deportes', emoji:'⚽', title:'Escena 3', videoSrc:'escena-3.mp4', phraseSegments:[{start:0,end:3}], sentence:"We practiced this part many times.", translation:"Practicamos esta parte muchas veces."},
+  {id:'escena4', category:'deportes', emoji:'🏆', title:'Escena 4', videoSrc:'escena-4.mp4', phraseSegments:[{start:0,end:3}], sentence:"Everyone did a great job today.", translation:"Todos hicieron un gran trabajo hoy."},
+  {id:'escena5', category:'musica', emoji:'🎵', title:'Escena 5', videoSrc:'escena-5.mp4', phraseSegments:[{start:0,end:3}], sentence:"This scene means a lot to us.", translation:"Esta escena significa mucho para nosotros."},
+  {id:'escena6', category:'tecnologia', emoji:'💻', title:'Escena 6', videoSrc:'escena-6.mp4', phraseSegments:[{start:0,end:3}], sentence:"We hope you enjoy watching this.", translation:"Esperamos que disfruten viendo esto."},
 ];
 
 const VOCAB_BY_CATEGORY = {
@@ -1032,6 +1036,14 @@ function renderSpeaking(){
     </div>
     <div id="record-status" class="subtitle"></div>
     <div id="speaking-feedback"></div>
+
+    <div class="section-title" style="margin-top:22px;">Verificación automática</div>
+    <p class="subtitle" style="margin-top:-6px;">Toca el botón y di la frase en voz alta. En cuanto termines de hablar, se revisa solo — no importa cuánto tardes.</p>
+    <div class="rec-controls">
+      <button class="btn btn-primary" id="start-autocheck">${ICONS.mic} Hablar y verificar</button>
+    </div>
+    <div id="autocheck-status" class="subtitle"></div>
+    <div id="autocheck-feedback"></div>
   </div>`;
 }
 function wireSpeaking(){
@@ -1105,12 +1117,28 @@ function wireSpeaking(){
       const userAudio = new Audio(speakingState.recordedUrl);
       const videoEl = document.getElementById('speak-video');
       if(videoEl){
-        videoEl.muted = true;
+        const segments = (scene.phraseSegments && scene.phraseSegments.length) ? scene.phraseSegments : [{start:0, end:3}];
+        let segIdx = 0;
+        videoEl.muted = false;
         videoEl.currentTime = 0;
         videoEl.play();
-        userAudio.play();
-        userAudio.onended = ()=>{ videoEl.muted = false; };
-        document.getElementById('speaking-feedback').innerHTML = `<div class="feedback-banner good">${ICONS.check} Reproduciendo la escena con tu doblaje. ¡Autoevalúate!</div>`;
+        const onTime = ()=>{
+          const t = videoEl.currentTime;
+          const seg = segments[segIdx];
+          if(!seg){ videoEl.removeEventListener('timeupdate', onTime); videoEl.muted = false; return; }
+          if(t >= seg.start && t < seg.end){
+            if(!videoEl.muted) videoEl.muted = true;
+            if(userAudio.paused) userAudio.play();
+          } else if(t >= seg.end){
+            if(!userAudio.paused) userAudio.pause();
+            videoEl.muted = false;
+            segIdx += 1;
+          }
+        };
+        videoEl.addEventListener('timeupdate', onTime);
+        videoEl.onended = ()=>{ userAudio.pause(); videoEl.muted = false; videoEl.removeEventListener('timeupdate', onTime); };
+        const tramos = segments.map(s=>`${s.start}s–${s.end}s`).join(', ');
+        document.getElementById('speaking-feedback').innerHTML = `<div class="feedback-banner good">${ICONS.check} Reproduciendo la escena — tu doblaje entra automáticamente en: ${tramos}. ¡Autoevalúate!</div>`;
       } else {
         userAudio.play();
         document.getElementById('speaking-feedback').innerHTML = `<div class="feedback-banner good">${ICONS.check} Reproduciendo tu grabación. ¡Autoevalúate!</div>`;
