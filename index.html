@@ -276,7 +276,7 @@ const STORY_SCENES = [
   {id:'tecnologia2', category:'tecnologia', emoji:'🤖', title:'Demo en vivo', sentence:"This device updates itself while you sleep.", translation:"Este dispositivo se actualiza solo mientras duermes."},
   // Escena propia del usuario, subida junto al HTML en el mismo repositorio de GitHub.
   // Reemplaza "sentence" y "translation" por la frase real de tu video (debe ser texto original tuyo, no diálogo de una película con derechos de autor).
-  {id:'escena1', category:'cine', emoji:'🎥', title:'Escena 1 (tuya)', videoSrc:'Escena-1.mp4', sentence:"ESCRIBE AQUÍ TU FRASE EN INGLÉS", translation:"ESCRIBE AQUÍ LA TRADUCCIÓN"},
+  {id:'escena1', category:'cine', emoji:'🎥', title:'Escena 1 (tuya)', videoSrc:'escena-1.mp4', sentence:"ESCRIBE AQUÍ TU FRASE EN INGLÉS", translation:"ESCRIBE AQUÍ LA TRADUCCIÓN"},
 ];
 
 const VOCAB_BY_CATEGORY = {
@@ -760,11 +760,16 @@ function obPretestListening(){
 }
 function obPretestReading(){
   const item = SUBTITLE_ITEMS[0];
-  const wordsHtml = item.shownWords.map((w,i)=>`<span class="word-tap" data-idx="${i}">${w}</span>`).join(' ');
+  const wrongShownWord = item.shownWords[item.wrongIndex].replace(/[.,]$/,'');
+  const distractorPool = item.shownWords
+    .map((w,i)=> i===item.wrongIndex ? null : w.replace(/[.,]$/,''))
+    .filter(Boolean);
+  const options = shuffle([wrongShownWord, ...shuffle(distractorPool).slice(0,3)]);
   return `
     <h2 style="font-size:20px;margin-bottom:6px;">Prueba 4 · Reading</h2>
-    <p class="subtitle">Toca la palabra que está mal en el subtítulo:</p>
-    <div class="subtitle-box" id="ob-read-box">${wordsHtml}</div>
+    <p class="subtitle">Encuentra la palabra incorrecta en el subtítulo:</p>
+    <div class="subtitle-box">"${item.shownWords.join(' ')}"</div>
+    <div class="pretest-q">${mcqHTML(options,'ob-read-options')}</div>
     <div id="ob-read-feedback"></div>
     <button class="btn btn-primary btn-block" id="ob-read-next" disabled style="margin-top:14px;">Ver mi resultado</button>
   `;
@@ -856,26 +861,16 @@ function wireOnboarding(){
   });
   if(listenNext) listenNext.onclick = ()=> nav('onboard',{step:8});
 
-  const readBox = document.getElementById('ob-read-box');
   const readNext = document.getElementById('ob-read-next');
-  if(readBox){
+  if(document.getElementById('ob-read-options')){
     const item = SUBTITLE_ITEMS[0];
-    readBox.querySelectorAll('.word-tap').forEach(span=>{
-      span.onclick = ()=>{
-        const idx = parseInt(span.getAttribute('data-idx'));
-        if(idx === item.wrongIndex){
-          readBox.querySelectorAll('.word-tap').forEach(s=>s.onclick=null);
-          span.classList.add('found-wrong');
-          span.textContent = item.fix + (span.textContent.endsWith('.')?'.':'');
-          document.getElementById('ob-read-feedback').innerHTML = `<div class="feedback-banner good">${ICONS.check} ¡Correcto! La palabra correcta es "${item.fix}".</div>`;
-          onboardData.answers.reading = true;
-          if(readNext) readNext.disabled = false;
-        } else {
-          span.classList.add('shake');
-          setTimeout(()=>span.classList.remove('shake'), 300);
-          onboardData.answers.reading = false;
-        }
-      };
+    const wrongShownWord = item.shownWords[item.wrongIndex].replace(/[.,]$/,'');
+    wireMCQ('ob-read-options', wrongShownWord, correct=>{
+      onboardData.answers.reading = correct;
+      document.getElementById('ob-read-feedback').innerHTML = correct
+        ? `<div class="feedback-banner good">${ICONS.check} ¡Correcto! La palabra correcta era "${item.fix}".</div>`
+        : `<div class="feedback-banner bad">No era esa. La palabra correcta era "${item.fix}".</div>`;
+      if(readNext) readNext.disabled = false;
     });
   }
   if(readNext) readNext.onclick = ()=> nav('onboard',{step:9});
